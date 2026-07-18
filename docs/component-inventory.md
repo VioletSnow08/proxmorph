@@ -7,6 +7,7 @@
 | Theme | File | Lines | Version Format | Version | Tier |
 |-------|------|-------|----------------|---------|------|
 | UniFi | `themes/theme-unifi.css` | 3,890 | `Version: X.XX` in header comment | 5.93 | 3 — Comprehensive |
+| UniFi OLED | `themes/theme-unifi-oled.css` | 3,951 | `Version: X.X.X` in header comment | 1.0.0 | 3 — Comprehensive |
 | Catppuccin Mocha | `themes/theme-catppuccin-mocha.css` | 1,953 | `Version: X.X.X` in header comment | 1.2.1 | 2 — Production |
 | GitHub Dark | `themes/theme-github-dark.css` | 2,215 | `Version: X.X.XX` in header + inline changelog | 2.2.23 | 2 — Production |
 | Blue Slate | `themes/theme-blue-slate.css` | 877 | None (no version in header) | — | 1 — Minimal |

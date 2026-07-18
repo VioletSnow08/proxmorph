@@ -209,6 +209,15 @@ Clean, modern themes inspired by the [Ubiquiti UniFi](https://ui.com/) Network A
       <i>Light variant with clean white surfaces and blue accent</i>
     </td>
   </tr>
+  <tr>
+    <td width="50%" align="center">
+      <h3>UniFi OLED</h3>
+      <img src="screenshots/unifi-oled.png" alt="UniFi OLED Theme" width="100%">
+      <br>
+      <i>True-black OLED variant of UniFi — pure #000 backgrounds</i>
+    </td>
+    <td width="50%"></td>
+  </tr>
 </table>
 
 ---
@@ -374,6 +383,13 @@ All themes are also available for Proxmox Datacenter Manager 1.x.
       <h3>UniFi Light</h3>
       <img src="screenshots/pdm-unifi-light.png" alt="PDM UniFi Light Theme" width="100%">
     </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <h3>UniFi OLED</h3>
+      <img src="screenshots/pdm-unifi-oled.png" alt="PDM UniFi OLED Theme" width="100%">
+    </td>
+    <td width="50%"></td>
   </tr>
 </table>
 

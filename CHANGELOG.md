@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.8.0] - 2026-07-18
+
+### Added
+- **UniFi OLED theme** (#46) — true-black OLED variant of UniFi with pure `#000000` backgrounds, subtle-border panel separation, and an OLED-tuned blue accent. Includes PVE/PBS + PDM support and a dedicated chart patcher.
+
 ## [2.7.3] - 2026-06-12
 
 ### Fixed

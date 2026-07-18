@@ -62,7 +62,7 @@ Comparison between default Proxmox Dark theme and UniFi theme:
 | Gruvbox | Dark, Light |
 | Solarized | Dark, Light |
 | Tokyo Night | — |
-| UniFi | Dark, Light |
+| UniFi | Dark, Light, OLED |
 | GitHub Dark | — |
 | Blue Slate | — |
 
