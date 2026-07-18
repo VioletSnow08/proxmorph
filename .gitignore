@@ -3,6 +3,8 @@
 # Context/conversation files
 context.md
 references/
+CLAUDE.md
+docs/superpowers/
 
 # Archive folder - old theme versions
 themes/_archive/
@@ -23,8 +25,6 @@ Desktop.ini
 *~
 .idea/
 .vscode/
-.github/instructions/
-.github/*.md
 
 # Compiled SASS (if any)
 *.css.map
