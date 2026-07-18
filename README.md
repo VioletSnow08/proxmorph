@@ -14,11 +14,11 @@ Custom themes for Proxmox VE (PVE), Proxmox Backup Server (PBS), and Proxmox Dat
 
 Comparison between default Proxmox Dark theme and UniFi theme:
 
-![Proxmox Dark vs UniFi Theme](screenshots/Screenshot.png)
+![Proxmox Dark vs UniFi vs UniFi OLED Theme](screenshots/Screenshot.png)
 
 ## 🎨 Themes
 
-**22 themes** across 9 collections. Featured themes below — [**View Full Gallery →**](THEMES.md)
+**23 themes** across 9 collections. Featured themes below — [**View Full Gallery →**](THEMES.md)
 
 <table>
   <tr>
