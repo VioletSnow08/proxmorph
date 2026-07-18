@@ -99,6 +99,7 @@ chmod +x install.sh
 | `./install.sh uninstall` | Remove themes |
 | `./install.sh update` or `bash <(curl -fsSL https://raw.githubusercontent.com/IT-BAER/proxmorph/main/install.sh) update` | Updates (latest from GitHub) and install the latest themes |
 | `./install.sh status` | Show installation status |
+| `./install.sh default-theme <key\|none>` | Set a server-side default theme for new browsers (user choice always wins) |
 | `./install.sh` | Shows Menu to manage|
 
 ## 🛠️ Creating Themes

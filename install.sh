@@ -130,6 +130,13 @@ check_product() {
         print_error "This script requires PVE 8.x/9.x, PBS 3.x/4.x, or PDM 1.x."
         exit 1
     fi
+
+    # Theme cookie + web path for server-side default theme injection
+    case "$PRODUCT" in
+        PVE) THEME_COOKIE="PVEThemeCookie"; THEME_WEB_PATH="/pwt/themes" ;;
+        PBS) THEME_COOKIE="PBSThemeCookie"; THEME_WEB_PATH="/widgettoolkit/themes" ;;
+        *)   THEME_COOKIE=""; THEME_WEB_PATH="" ;;
+    esac
 }
 
 # Get latest release version from GitHub
@@ -273,6 +280,11 @@ patch_theme_map() {
 JS_PATCH_MARKER="<!-- ProxMorph JS Patches -->"
 JS_PATCH_MARKER_END="<!-- /ProxMorph JS Patches -->"
 
+# Server-side default theme (issue #52)
+DEFAULT_THEME_FILE="/etc/proxmorph/default-theme"
+DEFAULT_THEME_MARKER="<!-- ProxMorph Default Theme -->"
+DEFAULT_THEME_MARKER_END="<!-- /ProxMorph Default Theme -->"
+
 # PDM CSS Theme Override Configuration (Dynamic markers)
 PDM_CSS_MARKER="<!-- ProxMorph PDM Theme -->"
 PDM_CSS_MARKER_END="<!-- /ProxMorph PDM Theme -->"
@@ -366,6 +378,123 @@ remove_js_patches() {
     fi
 }
 
+# --- Server-side default theme (issue #52) ---
+
+# Print configured default theme key (empty if none)
+get_default_theme() {
+    [[ -f "$DEFAULT_THEME_FILE" ]] && tr -d ' \t\r\n' < "$DEFAULT_THEME_FILE"
+    return 0
+}
+
+# Remove the default-theme block from the index template
+remove_default_theme_injection() {
+    if [[ -f "$INDEX_TEMPLATE" ]] && grep -q "$DEFAULT_THEME_MARKER" "$INDEX_TEMPLATE"; then
+        local esc_start=$(printf '%s\n' "$DEFAULT_THEME_MARKER" | sed 's/[]\/$*.^[]/\\&/g')
+        local esc_end=$(printf '%s\n' "$DEFAULT_THEME_MARKER_END" | sed 's/[]\/$*.^[]/\\&/g')
+        sed -i "\|${esc_start}|,\|${esc_end}|d" "$INDEX_TEMPLATE"
+        print_info "Removed default theme injection from $(basename "$INDEX_TEMPLATE")"
+    fi
+}
+
+# Inject the default-theme bootstrap script into the index template (PVE/PBS).
+# When no theme cookie exists, it sets the cookie to the configured default and
+# writes the theme <link> synchronously so the first paint is already themed.
+# An existing cookie (any user choice, incl. stock themes) always wins.
+inject_default_theme() {
+    [[ "$PRODUCT" == "PDM" ]] && return 0
+    [[ -f "$INDEX_TEMPLATE" ]] || return 0
+
+    # Always start clean (also handles default changed/removed)
+    remove_default_theme_injection
+
+    local default_key=$(get_default_theme)
+    [[ -z "$default_key" ]] && return 0
+
+    # Key must satisfy the proxy's cookie validation regex
+    if ! [[ "$default_key" =~ ^[a-z]{1,10}(-[a-z]{1,10}){0,5}$ ]]; then
+        print_warning "Default theme key '${default_key}' is invalid (lowercase kebab-case, segments max 10 chars) - skipping"
+        return 0
+    fi
+    if [[ ! -f "${THEMES_DIR}/theme-${default_key}.css" ]]; then
+        print_warning "Default theme 'theme-${default_key}.css' not installed - skipping injection"
+        return 0
+    fi
+
+    local tmpblock=$(mktemp)
+    cat > "$tmpblock" << BLOCK
+${DEFAULT_THEME_MARKER}
+<script>
+(function() {
+    if (document.cookie.indexOf('${THEME_COOKIE}=') !== -1) { return; }
+    var k = '${default_key}';
+    var d = new Date(); d.setFullYear(d.getFullYear() + 10);
+    document.cookie = '${THEME_COOKIE}=' + k + '; expires=' + d.toUTCString() + '; path=/';
+    document.write('<link rel="stylesheet" type="text/css" href="${THEME_WEB_PATH}/theme-' + k + '.css">');
+})();
+</script>
+${DEFAULT_THEME_MARKER_END}
+BLOCK
+    local tmpout=$(mktemp)
+    awk -v blockfile="$tmpblock" 'BEGIN{done=0; while((getline line < blockfile)>0) block=block (block?"\n":"") line} !done && /<\/head>/{print block; done=1} {print}' "$INDEX_TEMPLATE" > "$tmpout"
+    mv "$tmpout" "$INDEX_TEMPLATE"
+    chmod 644 "$INDEX_TEMPLATE"
+    rm -f "$tmpblock"
+    print_status "Default theme '${default_key}' injected into $(basename "$INDEX_TEMPLATE")"
+}
+
+# CLI: ./install.sh default-theme [key|none]
+manage_default_theme() {
+    local arg="${1:-}"
+
+    if [[ -z "$arg" ]]; then
+        local current=$(get_default_theme)
+        if [[ -n "$current" ]]; then
+            print_info "Server-side default theme: ${current}"
+        else
+            print_info "No server-side default theme configured"
+        fi
+        print_info "Usage: $0 default-theme <key|none>"
+        print_info "Installed theme keys:"
+        for css_file in "${THEMES_DIR}"/theme-*.css; do
+            [[ -f "$css_file" ]] && print_theme "  $(basename "$css_file" .css | sed 's/^theme-//')"
+        done
+        return 0
+    fi
+
+    if [[ "$arg" == "none" ]]; then
+        rm -f "$DEFAULT_THEME_FILE"
+        if [[ "$PRODUCT" == "PDM" ]]; then
+            local pdm_src=$(get_themes_source)
+            [[ -n "$pdm_src" ]] && install_pdm_themes "$pdm_src"
+        else
+            remove_default_theme_injection
+        fi
+        print_status "Server-side default theme removed"
+    else
+        if [[ "$PRODUCT" == "PDM" ]]; then
+            if [[ ! -f "${PDM_THEMES_DIR}/theme-${arg}.css" ]]; then
+                print_error "Theme 'theme-${arg}.css' is not installed"
+                exit 1
+            fi
+        elif [[ ! -f "${THEMES_DIR}/theme-${arg}.css" ]]; then
+            print_error "Theme 'theme-${arg}.css' is not installed"
+            exit 1
+        fi
+        mkdir -p "$(dirname "$DEFAULT_THEME_FILE")"
+        echo "$arg" > "$DEFAULT_THEME_FILE"
+        if [[ "$PRODUCT" == "PDM" ]]; then
+            local pdm_src=$(get_themes_source)
+            [[ -n "$pdm_src" ]] && install_pdm_themes "$pdm_src"
+        else
+            inject_default_theme
+        fi
+        print_status "Server-side default theme set to '${arg}'"
+    fi
+
+    print_info "Restarting ${PROXY_SERVICE} service in background..."
+    nohup systemctl restart "${PROXY_SERVICE}" &>/dev/null &
+}
+
 # Install PDM CSS theme overrides into index.hbs
 # PDM themes work by injecting a <link> tag that overrides --pwt-color-* tokens
 # from the WASM-loaded base theme (Crisp/Desktop/Material)
@@ -437,11 +566,18 @@ install_pdm_themes() {
             fi
         done
 
+        # Server-side default theme (fallback only, user choice in localStorage wins)
+        local pdm_default=$(get_default_theme)
+        if [[ -n "$pdm_default" ]] && [[ -f "${PDM_THEMES_DIR}/theme-${pdm_default}.css" ]]; then
+            echo "<script>window.__PM_DEFAULT = 'theme-${pdm_default}.css';</script>" >> "$tmpblock"
+            print_info "PDM default theme: theme-${pdm_default}.css"
+        fi
+
         # Inline activation script (runs before WASM loads)
         cat >> "$tmpblock" << 'JSBLOCK'
 <script>
 (function() {
-    var saved = localStorage.getItem('proxmorph-theme');
+    var saved = localStorage.getItem('proxmorph-theme') || window.__PM_DEFAULT;
     if (!saved) return;
     // Enable base component styles
     var base = document.querySelector('link.proxmorph-base');
@@ -519,6 +655,11 @@ JS_PATCH_MARKER_END="${JS_PATCH_MARKER_END}"
 PDM_CSS_MARKER="${PDM_CSS_MARKER}"
 PDM_CSS_MARKER_END="${PDM_CSS_MARKER_END}"
 PDM_THEMES_DIR="${PDM_THEMES_DIR}"
+DEFAULT_THEME_FILE="${DEFAULT_THEME_FILE}"
+DEFAULT_THEME_MARKER="${DEFAULT_THEME_MARKER}"
+DEFAULT_THEME_MARKER_END="${DEFAULT_THEME_MARKER_END}"
+THEME_COOKIE="${THEME_COOKIE}"
+THEME_WEB_PATH="${THEME_WEB_PATH}"
 
 # Set themes source based on product
 if [ "\$PRODUCT" = "PDM" ]; then
@@ -558,6 +699,11 @@ fi
 
 # Check if template needs JS patch (PVE/PBS only)
 if [ "\$PRODUCT" != "PDM" ] && [ -d "\${THEMES_SOURCE}/patches" ] && ! grep -q "\$JS_PATCH_MARKER" "\$INDEX_TEMPLATE" 2>/dev/null; then
+    needs_repatch=true
+fi
+
+# Default theme injection lost after template update? (PVE/PBS)
+if [ "\$PRODUCT" != "PDM" ] && [ -f "\$DEFAULT_THEME_FILE" ] && ! grep -q "\$DEFAULT_THEME_MARKER" "\$INDEX_TEMPLATE" 2>/dev/null; then
     needs_repatch=true
 fi
 
@@ -605,10 +751,16 @@ if [ "\$needs_repatch" = "true" ]; then
                     echo "<link rel=\"stylesheet\" href=\"/proxmorph-themes/\${css_name}\" class=\"proxmorph-theme\" disabled>" >> "\$tmpblock"
                 fi
             done
+            if [ -f "\$DEFAULT_THEME_FILE" ]; then
+                pdm_default=\$(tr -d ' \t\r\n' < "\$DEFAULT_THEME_FILE")
+                if [ -n "\$pdm_default" ] && [ -f "\${PDM_THEMES_DIR}/theme-\${pdm_default}.css" ]; then
+                    echo "<script>window.__PM_DEFAULT = 'theme-\${pdm_default}.css';</script>" >> "\$tmpblock"
+                fi
+            fi
             cat >> "\$tmpblock" << 'JSBLK'
 <script>
 (function() {
-    var saved = localStorage.getItem('proxmorph-theme');
+    var saved = localStorage.getItem('proxmorph-theme') || window.__PM_DEFAULT;
     if (!saved) return;
     var base = document.querySelector('link.proxmorph-base');
     if (base) base.removeAttribute('disabled');
@@ -676,6 +828,33 @@ JSBLK
 
                 sed -i "s|</body>|\${script_tags}\n</body>|" "\$INDEX_TEMPLATE"
                 log "Patched \$(basename "\$INDEX_TEMPLATE") with JS loader"
+            fi
+        fi
+
+        # Re-inject server-side default theme bootstrap (PVE/PBS)
+        if [ -f "\$DEFAULT_THEME_FILE" ] && [ -f "\$INDEX_TEMPLATE" ] && ! grep -q "\$DEFAULT_THEME_MARKER" "\$INDEX_TEMPLATE"; then
+            default_key=\$(tr -d ' \t\r\n' < "\$DEFAULT_THEME_FILE")
+            if [ -n "\$default_key" ] && [ -f "\${WIDGET_TOOLKIT_DIR}/themes/theme-\${default_key}.css" ]; then
+                dt_block=\$(mktemp)
+                cat > "\$dt_block" << DTBLOCK
+\$DEFAULT_THEME_MARKER
+<script>
+(function() {
+    if (document.cookie.indexOf('\${THEME_COOKIE}=') !== -1) { return; }
+    var k = '\${default_key}';
+    var d = new Date(); d.setFullYear(d.getFullYear() + 10);
+    document.cookie = '\${THEME_COOKIE}=' + k + '; expires=' + d.toUTCString() + '; path=/';
+    document.write('<link rel="stylesheet" type="text/css" href="\${THEME_WEB_PATH}/theme-' + k + '.css">');
+})();
+</script>
+\$DEFAULT_THEME_MARKER_END
+DTBLOCK
+                dt_out=\$(mktemp)
+                awk -v blockfile="\$dt_block" 'BEGIN{done=0; while((getline line < blockfile)>0) block=block (block?"\n":"") line} !done && /<\/head>/{print block; done=1} {print}' "\$INDEX_TEMPLATE" > "\$dt_out"
+                mv "\$dt_out" "\$INDEX_TEMPLATE"
+                chmod 644 "\$INDEX_TEMPLATE"
+                rm -f "\$dt_block"
+                log "Re-injected default theme '\$default_key' into \$(basename "\$INDEX_TEMPLATE")"
             fi
         fi
 
@@ -1480,7 +1659,10 @@ install_themes() {
     
     # Install JavaScript patches (chart colors, etc.)
     install_js_patches
-    
+
+    # Re-apply server-side default theme (if configured)
+    inject_default_theme
+
     # Write version file
     echo "$VERSION" > "${INSTALL_DIR}/.version"
     
@@ -1542,6 +1724,7 @@ uninstall_themes() {
     if [[ "$PRODUCT" == "PDM" ]]; then
         remove_pdm_themes
         remove_apt_hook
+        rm -f "$DEFAULT_THEME_FILE"
         if [[ -d "$INSTALL_DIR" ]]; then
             rm -rf "$INSTALL_DIR"
             print_status "Removed install directory: $INSTALL_DIR"
@@ -1571,7 +1754,11 @@ uninstall_themes() {
     
     # Remove JavaScript patches
     remove_js_patches
-    
+
+    # Remove server-side default theme
+    remove_default_theme_injection
+    rm -f "$DEFAULT_THEME_FILE"
+
     # Remove sensor patches
     remove_sensors
     
@@ -1679,6 +1866,14 @@ show_status() {
     else
         echo -e "  Auto-patch: ${YELLOW}Not installed${NC}"
     fi
+
+    # Server-side default theme
+    local default_theme=$(get_default_theme)
+    if [[ -n "$default_theme" ]]; then
+        echo -e "  Default:    ${GREEN}${default_theme}${NC} (server-side)"
+    else
+        echo -e "  Default:    ${YELLOW}Not set${NC}"
+    fi
     
     # Sensor status (PVE only)
     if [[ "$PRODUCT" == "PVE" ]]; then
@@ -1700,10 +1895,11 @@ show_menu() {
     echo "  5) List themes"
     echo "  6) Show status"
     [[ "$PRODUCT" == "PVE" ]] && echo "  7) Manage sensors"
+    echo "  8) Set default theme (server-side)"
     echo "  0) Exit"
     echo ""
-    read -p "Enter choice [0-7]: " choice
-    
+    read -p "Enter choice [0-8]: " choice
+
     case $choice in
         1) install_themes ;;
         2) download_release && install_themes ;;
@@ -1712,6 +1908,12 @@ show_menu() {
         5) list_themes ;;
         6) show_status ;;
         7) manage_sensors_menu ;;
+        8)
+            manage_default_theme
+            echo ""
+            read -p "Enter theme key (or 'none' to clear, empty to cancel): " dt_key
+            [[ -n "$dt_key" ]] && manage_default_theme "$dt_key"
+            ;;
         0) exit 0 ;;
         *) print_error "Invalid option" ; show_menu ;;
     esac
@@ -1747,6 +1949,9 @@ main() {
             ;;
         sensors)
             manage_sensors "${2:-status}"
+            ;;
+        default-theme)
+            manage_default_theme "${2:-}"
             ;;
         *)
             show_menu

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.8.0] - 2026-07-18
 
 ### Added
+- **Server-side default theme** (#52) — admins can set a default ProxMorph theme that applies to every browser that hasn't picked a theme yet. `./install.sh default-theme <key>` (or menu option 8) stores the key in `/etc/proxmorph/default-theme`. On PVE/PBS a small bootstrap script in the index template sets the theme cookie and loads the theme CSS on first visit (no flash of unthemed UI); on PDM the theme selector falls back to the configured default when `localStorage` has no choice. A user's own selection always wins, including choosing a stock Proxmox theme. Survives Proxmox updates via the existing APT hook. Clear with `./install.sh default-theme none`.
 - **UniFi OLED theme** (#46) — true-black OLED variant of UniFi with pure `#000000` backgrounds, subtle-border panel separation, and an OLED-tuned blue accent. Includes PVE/PBS + PDM support and a dedicated chart patcher.
 
 ## [2.7.3] - 2026-06-12
