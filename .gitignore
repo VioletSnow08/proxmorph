@@ -1,6 +1,7 @@
 # ProxMorph .gitignore
 
-# Context/conversation files
+# Local-only config, notes & planning
+.claude/
 context.md
 references/
 CLAUDE.md
