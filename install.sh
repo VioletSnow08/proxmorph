@@ -15,7 +15,7 @@ MAGENTA='\033[0;35m'
 NC='\033[0m' # No Color
 
 # Configuration
-VERSION="2.8.0"
+VERSION="2.8.1"
 WIDGET_TOOLKIT_DIR="/usr/share/javascript/proxmox-widget-toolkit"
 THEMES_DIR="${WIDGET_TOOLKIT_DIR}/themes"
 PROXMOXLIB_JS="${WIDGET_TOOLKIT_DIR}/proxmoxlib.js"
@@ -145,35 +145,71 @@ get_latest_version() {
         grep '"tag_name"' | sed -E 's/.*"v([^"]+)".*/\1/'
 }
 
-# Download and extract release from GitHub
+# Verify downloaded artifacts against a SHA256SUMS manifest.
+# Args: $1 = directory containing the artifact(s) and the sums file,
+#       $2 = sums filename (default SHA256SUMS).
+# Returns 0 only if every present file listed in the manifest matches. Files in
+# the manifest that are absent locally are ignored (we do not download the .zip);
+# if NOTHING could be verified (e.g. the artifact is not listed at all), sha256sum
+# exits non-zero, so this fails closed.
+verify_checksum() {
+    local dir="$1"
+    local sums="${2:-SHA256SUMS}"
+    ( cd "$dir" && sha256sum --ignore-missing -c "$sums" )
+}
+
+# Download, verify, and extract a release.
+# Source defaults to GitHub releases; set PROXMORPH_RELEASE_BASE to the directory
+# that directly contains proxmorph-<ver>.tar.gz and SHA256SUMS to install from an
+# internal mirror (or a local test server) instead.
 download_release() {
     local version="${1:-$(get_latest_version)}"
-    
+
     if [[ -z "$version" ]]; then
         print_error "Could not determine latest version"
         exit 1
     fi
-    
+
     print_info "Downloading ProxMorph v${version}..."
-    
-    local download_url="https://github.com/${GITHUB_REPO}/releases/download/v${version}/proxmorph-${version}.tar.gz"
+
+    local base="${PROXMORPH_RELEASE_BASE:-https://github.com/${GITHUB_REPO}/releases/download/v${version}}"
+    local archive="proxmorph-${version}.tar.gz"
     local tmp_dir=$(mktemp -d)
-    
-    if ! curl -sL "$download_url" -o "${tmp_dir}/proxmorph.tar.gz"; then
-        print_error "Failed to download release v${version}"
+
+    if ! curl -fsSL "${base}/${archive}" -o "${tmp_dir}/${archive}"; then
+        print_error "Failed to download release v${version} from ${base}"
         rm -rf "$tmp_dir"
         exit 1
     fi
-    
+
+    # Fetch the checksum manifest. Absence is fatal: without it we cannot verify
+    # what we just downloaded, and a soft-fail would defeat the purpose (anyone who
+    # can swap the tarball can also drop the sums response).
+    if ! curl -fsSL "${base}/SHA256SUMS" -o "${tmp_dir}/SHA256SUMS"; then
+        print_error "Could not fetch SHA256SUMS for v${version} from ${base}"
+        print_error "Refusing to install an unverifiable release. See README 'Verify before you run'."
+        rm -rf "$tmp_dir"
+        exit 1
+    fi
+
+    print_info "Verifying checksum..."
+    if ! verify_checksum "$tmp_dir" SHA256SUMS; then
+        print_error "CHECKSUM VERIFICATION FAILED for ${archive}"
+        print_error "The downloaded release does not match its published SHA256SUMS. Aborting."
+        rm -rf "$tmp_dir"
+        exit 1
+    fi
+    print_status "Checksum verified"
+
     # Extract to install directory
     mkdir -p "$INSTALL_DIR"
     rm -rf "${INSTALL_DIR:?}"/*
-    tar -xzf "${tmp_dir}/proxmorph.tar.gz" -C "$INSTALL_DIR"
+    tar -xzf "${tmp_dir}/${archive}" -C "$INSTALL_DIR"
     rm -rf "$tmp_dir"
-    
+
     # Save version info
     echo "$version" > "${INSTALL_DIR}/.version"
-    
+
     print_status "Downloaded ProxMorph v${version}"
 }
 
@@ -1959,4 +1995,7 @@ main() {
     esac
 }
 
-main "$@"
+# Run only when executed directly, not when sourced (e.g. by tests).
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    main "$@"
+fi

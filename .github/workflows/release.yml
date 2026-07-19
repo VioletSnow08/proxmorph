@@ -7,6 +7,8 @@ on:
 
 permissions:
   contents: write
+  id-token: write       # required for build-provenance attestation (Sigstore/OIDC)
+  attestations: write   # required to write the attestation to the repo
 
 jobs:
   release:
@@ -52,6 +54,19 @@ jobs:
           cd release && tar -czvf ../proxmorph-${{ steps.version.outputs.VERSION }}.tar.gz .
           cd .. && zip -r proxmorph-${{ steps.version.outputs.VERSION }}.zip release/
 
+      - name: Generate SHA256SUMS
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          sha256sum "proxmorph-${VERSION}.tar.gz" "proxmorph-${VERSION}.zip" > SHA256SUMS
+          cat SHA256SUMS
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            proxmorph-${{ steps.version.outputs.VERSION }}.tar.gz
+            proxmorph-${{ steps.version.outputs.VERSION }}.zip
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -60,3 +75,4 @@ jobs:
           files: |
             proxmorph-${{ steps.version.outputs.VERSION }}.tar.gz
             proxmorph-${{ steps.version.outputs.VERSION }}.zip
+            SHA256SUMS

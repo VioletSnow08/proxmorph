@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.8.1] - 2026-07-19
+
+### Added
+- **Release checksums and provenance**: every release now publishes a `SHA256SUMS` manifest and a GitHub build-provenance attestation. The installer verifies the downloaded tarball against `SHA256SUMS` and refuses to install on a mismatch or when the manifest is missing (fail closed). Verify a release yourself with `sha256sum -c` and `gh attestation verify` before running; see the README "Verify before you run" section.
+- **`PROXMORPH_RELEASE_BASE`**: point the installer at an internal mirror of the release artifacts (air-gapped or policy-controlled installs). Checksum verification still applies against the mirrored `SHA256SUMS`.
+- **README audit transparency**: documented exactly what the installer changes on the system, the review-then-run clone path, and honest framing of what checksums vs. attestation guarantee.
+
+### Security
+- The release download path is no longer trust-on-first-download: artifacts are integrity-checked against a published manifest before extraction as root.
+
 ## [2.8.0] - 2026-07-18
 
 ### Added

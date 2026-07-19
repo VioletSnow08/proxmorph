@@ -85,6 +85,45 @@ chmod +x install.sh
 ./install.sh install
 ```
 
+### Verify before you run
+
+Every release ships a `SHA256SUMS` manifest and a GitHub build-provenance attestation. The installer verifies the downloaded tarball against `SHA256SUMS` automatically and refuses to install on a mismatch, or if the manifest is missing (fail closed). That runs on the Proxmox host with tools already present (`sha256sum`), so normal install and update stay a single command with no extra setup.
+
+For stronger, provenance-level checks, verify a release **on your workstation** before you roll it out (a stock Proxmox host has no `gh` CLI, so this step belongs on your machine, not the node):
+
+```bash
+# integrity: do the bytes match the published manifest?
+curl -fsSLO https://github.com/IT-BAER/proxmorph/releases/download/v<ver>/proxmorph-<ver>.tar.gz
+curl -fsSLO https://github.com/IT-BAER/proxmorph/releases/download/v<ver>/SHA256SUMS
+sha256sum -c SHA256SUMS --ignore-missing
+
+# provenance: was it built by this repo's release workflow?
+gh attestation verify proxmorph-<ver>.tar.gz --repo IT-BAER/proxmorph
+```
+
+What each gives you: `SHA256SUMS` proves the bytes match what was published with the release (integrity). The attestation gives you a Sigstore/OIDC chain tying the artifact to this repository's Actions build, so you can check origin against something other than the transport. It is a check you opt into, not something the host enforces; neither replaces reading `install.sh` before running it as root. The [What the installer changes](#-what-the-installer-changes-on-your-system) section lists exactly what it touches.
+
+### Install from a clone (review first)
+
+```bash
+git clone https://github.com/IT-BAER/proxmorph.git
+cd proxmorph
+git checkout v<ver>          # pin a release
+less install.sh              # read it
+./install.sh install         # installs from the local files, no download
+```
+
+### Install from an internal mirror
+
+For air-gapped or policy-controlled environments, point the installer at your own copy of the release artifacts. `PROXMORPH_RELEASE_BASE` is the directory that directly contains `proxmorph-<ver>.tar.gz` and `SHA256SUMS`:
+
+```bash
+PROXMORPH_RELEASE_BASE=https://mirror.example.internal/proxmorph \
+  ./install.sh update <ver>
+```
+
+Checksum verification still runs, against your mirrored `SHA256SUMS`.
+
 ### Apply Theme
 
 1. Hard refresh browser (Ctrl+Shift+R)
@@ -101,6 +140,18 @@ chmod +x install.sh
 | `./install.sh status` | Show installation status |
 | `./install.sh default-theme <key\|none>` | Set a server-side default theme for new browsers (user choice always wins) |
 | `./install.sh` | Shows Menu to manage|
+
+## 🔍 What the installer changes on your system
+
+Run as root, `install.sh` makes only these changes, all reversible with `./install.sh uninstall`:
+
+- **Themes:** copies `theme-*.css` into the product's widget-toolkit themes directory.
+- **Theme registration:** `sed`-patches the `theme_map` in `proxmoxlib.js` so the themes appear in the native Color Theme selector.
+- **Index template:** injects `<script>` / `<link>` tags into the product index template for the JS patches and (PDM) theme links.
+- **Persistence:** installs an APT hook at `/etc/apt/apt.conf.d/99proxmorph` that runs `/opt/proxmorph/post-update.sh` to re-apply the patches after a Proxmox update. The hook re-patches from the local `/opt/proxmorph` copy only; it downloads nothing.
+- **Sensors (PVE, optional):** if you enable sensor display, edits `Nodes.pm` to expose `lm-sensors` data.
+
+Originals are backed up to `/root/.proxmorph-backup` before any file is modified. `./install.sh uninstall` restores them and removes the hook.
 
 ## 🛠️ Creating Themes
 
