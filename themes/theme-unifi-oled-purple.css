@@ -73,6 +73,81 @@
     --pm-hover-medium: rgba(249, 250, 250, 0.04);
     --pm-hover-strong: rgba(249, 250, 250, 0.07);
 
+    /* Semantic aliases for common surfaces and controls */
+    --pm-bg-plain: #000000;
+    --pm-bg-surface-alt: #141414;
+    --pm-bg-overlay: rgba(0, 0, 0, 0.5);
+
+    --pm-border-soft: #1e1e1e;
+
+    --pm-text-secondary: #c2c7cd;
+    --pm-text-strong: #F9FAFA;
+    --pm-text-tertiary: #737C87;
+    --pm-text-inverse: #ffffff;
+
+    --pm-control-accent: #4797FF;
+    --pm-bg-accent-soft: rgba(0, 110, 255, 0.08);
+    --pm-bg-danger-soft: rgba(240, 58, 62, 0.15);
+    --pm-bg-danger-soft-strong: rgba(240, 58, 62, 0.25);
+    --pm-bg-warning-soft: rgba(245, 166, 35, 0.15);
+    --pm-border-divider: rgba(255, 255, 255, 0.06);
+    --pm-border-hover: #4A4F56;
+    --pm-tag-outline: rgba(52, 56, 61, 0.3);
+    --pm-shadow-accent: rgba(71, 151, 255, 0.1) 0px 0px 0px 1000px inset;
+    --pm-shadow-panel: 0 4px 20px rgba(0, 0, 0, 0.5);
+
+    --pm-btn-inline-bg: var(--pm-bg-elevated);
+    --pm-btn-inline-text: var(--pm-text-secondary);
+
+    --pm-info-blue: var(--pm-accent);
+    --pm-status-critical: var(--pm-error);
+    --pm-tag-muted: #8A919A;
+    --pm-date-bg: var(--pm-bg-plain);
+    --pm-date-hover-bg: var(--pm-bg-elevated);
+    --pm-date-border: var(--pm-border-soft);
+    --pm-date-text: var(--pm-text-secondary);
+
+    --pm-btn-primary-bg: var(--pm-accent);
+    --pm-btn-primary-hover-bg: var(--pm-accent-hover);
+    --pm-btn-primary-active-bg: var(--pm-accent-active);
+    --pm-btn-primary-disabled-bg: #460080;
+    --pm-btn-primary-disabled-border: rgb(49, 0, 102);
+    --pm-btn-primary-disabled-text: #8A9099;
+
+    --pm-btn-secondary-border: var(--pm-border-soft);
+    --pm-btn-secondary-bg: var(--pm-bg-elevated);
+    --pm-btn-secondary-hover-bg: var(--pm-bg-elevated);
+    --pm-btn-secondary-active-bg: var(--pm-accent-active);
+    --pm-btn-secondary-text: var(--pm-text-secondary);
+    --pm-btn-secondary-disabled-bg: rgba(40, 43, 47, 0.5);
+    --pm-btn-secondary-disabled-border: var(--pm-bg-surface);
+    --pm-btn-secondary-disabled-text: #555B63;
+
+    --pm-btn-ghost-bg: transparent;
+    --pm-btn-ghost-hover-bg: var(--pm-selection-bg);
+    --pm-btn-ghost-text: var(--pm-text-secondary);
+    --pm-btn-ghost-disabled-text: var(--pm-text-disabled);
+
+    --pm-treelist-icon-default: rgba(255, 255, 255, 0.75);
+    --pm-treelist-icon-muted: var(--pm-text-secondary);
+    --pm-treelist-icon-hover: var(--pm-text-inverse);
+    --pm-treelist-icon-selected: var(--pwt-gauge-default);
+    --pm-treelist-icon-selected-parent: var(--pm-text-strong);
+
+    --pm-treelist-text-default: var(--pm-text-secondary);
+    --pm-treelist-text-muted: var(--pm-text-secondary);
+    --pm-treelist-text-hover: var(--pm-text-strong);
+    --pm-treelist-text-selected: var(--pm-text-strong);
+    --pm-treelist-text-selected-parent: var(--pm-text-strong);
+
+    --pm-selection-bg: rgba(249, 250, 250, 0.07);
+    --pm-selection-bg-hover: rgba(249, 250, 250, 0.04);
+    --pm-selection-bg-soft: rgba(249, 250, 250, 0.02);
+
+    --pm-shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --pm-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+    --pm-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.1);
+
     --pm-radius-sm: 4px;
     --pm-radius-md: 6px;
     --pm-radius-lg: 8px;
@@ -175,7 +250,7 @@ th,
 
 /* Restore right border for grids inside windows (fixed v5.4 over-reach) */
 .x-window .x-panel-body.x-grid-body {
-    border-right: 1px solid #1e1e1e !important;
+    border-right: 1px solid var(--pm-border-soft) !important;
 }
 
 /* =====================================================
@@ -366,13 +441,13 @@ canvas.x-surface {
 /* Chart grid lines */
 .x-chart-grid-horizontal line,
 .x-chart-grid-vertical line {
-    stroke: #1e1e1e !important;
+    stroke: var(--pm-border-soft) !important;
     stroke-opacity: 1 !important;
 }
 
 /* Chart axis text */
 .x-chart-axis-label {
-    fill: #c2c7cd !important;
+    fill: var(--pm-text-secondary) !important;
 }
 
 /* RRDTool charts (Proxmox specific) - ensure PNG charts are visible */
@@ -390,7 +465,7 @@ div[class*="rrd"] img {
     /* v5.48: Background blur + 0.5 opacity */
     backdrop-filter: blur(4px) !important;
     -webkit-backdrop-filter: blur(4px) !important;
-    background-color: rgba(0, 0, 0, 0.5) !important;
+    background-color: var(--pm-bg-overlay) !important;
 }
 
 /* Disabled field-groups: keep the native "reduced opacity" look (no black mask overlay) */
@@ -904,18 +979,18 @@ tr:not(.x-grid-tree-node-expanded) .x-tree-expander::before {
 
 /* Toolbar Buttons - Compact & Transparent */
 .x-btn-default-toolbar-small {
-    background-color: transparent;
+    background-color: var(--pm-btn-ghost-bg);
     border: 1px solid #1e1e1e !important;
     padding: 4px 8px !important;
     border-radius: 4px;
 }
 
 .x-btn-default-toolbar-small .x-btn-inner-default-toolbar-small {
-    color: #c2c7cd;
+    color: var(--pm-btn-ghost-text);
 }
 
 .x-btn-default-toolbar-small .x-btn-icon-el-default-toolbar-small {
-    color: #c2c7cd;
+    color: var(--pm-btn-ghost-text);
 }
 
 /* v5.8: Toolbar button icon vertical centering fix */
@@ -943,7 +1018,7 @@ tr:not(.x-grid-tree-node-expanded) .x-tree-expander::before {
 
 .x-btn-default-toolbar-small.x-btn-over,
 .x-keyboard-mode .x-btn-default-toolbar-small.x-btn-focus {
-    background-color: #1e1e1e;
+    background-color: var(--pm-btn-ghost-hover-bg);
 }
 
 .x-btn-default-toolbar-small.x-btn.x-btn-disabled {
@@ -952,7 +1027,7 @@ tr:not(.x-grid-tree-node-expanded) .x-tree-expander::before {
     border-color: #0a0a0a !important;
 }
 .x-btn-default-toolbar-small.x-btn.x-btn-disabled .x-btn-inner {
-    color: #555B63 !important;
+    color: var(--pm-btn-ghost-disabled-text) !important;
 }
 
 .x-btn-default-toolbar-small.x-btn.x-btn-menu-active,
@@ -1098,10 +1173,10 @@ tr:not(.x-grid-tree-node-expanded) .x-tree-expander::before {
 
 /* Boundlist dropdown popup - UniFi style 4px radius */
 .x-boundlist {
-    background-color: #0a0a0a;
-    border: 1px solid #1e1e1e;
+    background-color: var(--pm-bg-surface);
+    border: 1px solid var(--pm-border-soft);
     border-radius: 4px !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--pm-shadow-md);
     padding: 2px;
 }
 
@@ -1109,18 +1184,18 @@ tr:not(.x-grid-tree-node-expanded) .x-tree-expander::before {
     background-color: transparent;
     border: none;
     border-radius: 4px !important;
-    color: #DEE0E3;
+    color: var(--pm-text-secondary);
     padding: 2px 8px;
 }
 
 .x-boundlist-selected {
-    background-color: rgba(249, 250, 250, 0.07);
-    color: #F9FAFA;
+    background-color: var(--pm-selection-bg);
+    color: var(--pm-text-strong);
 }
 
 .x-boundlist-item-over {
-    background-color: rgba(249, 250, 250, 0.04);
-    color: #DEE0E3;
+    background-color: var(--pm-selection-bg-hover);
+    color: var(--pm-text-secondary);
 }
 
 /* v5.38: Fix boundlist inner container inheriting 8px radius from global rule */
@@ -1155,12 +1230,12 @@ tr:not(.x-grid-tree-node-expanded) .x-tree-expander::before {
 }
 
 .x-form-display-field-default {
-    color: #c2c7cd;
+    color: var(--pm-text-secondary);
 }
 
 .x-form-text-default {
     background-color: transparent;
-    color: #F9FAFA;
+    color: var(--pm-text-strong);
     border-radius: 4px 0 0 4px !important;
     padding: 6px 10px !important;
 }
@@ -1177,11 +1252,11 @@ tr:not(.x-grid-tree-node-expanded) .x-tree-expander::before {
 }
 
 .x-form-item-label-default {
-    color: #c2c7cd;
+    color: var(--pm-text-secondary);
 }
 
 .x-form-spinner-default {
-    background-color: #0a0a0a;
+    background-color: var(--pm-bg-surface);
 }
 
 /* v5.59: Make spinner buttons fill container with FontAwesome arrows */
@@ -1383,13 +1458,13 @@ div[id^="pveLogView-"] .x-grid-cell-inner,
 }
 
 .x-grid-with-row-lines .x-grid-item.x-grid-item-selected {
-    background-color: rgba(0, 110, 255, 0.08) !important;
-    box-shadow: rgba(71, 151, 255, 0.1) 0px 0px 0px 1000px inset !important;
+    background-color: var(--pm-bg-accent-soft) !important;
+    box-shadow: var(--pm-shadow-accent) !important;
     border: none !important;
 }
 
 .x-grid-item-over {
-    background-color: hsla(214, 8%, 98%, 0.02) !important;
+    background-color: var(--pm-selection-bg-soft) !important;
 }
 
 .x-grid-item-over .x-grid-cell {
@@ -1403,12 +1478,12 @@ div[id^="pveLogView-"] .x-grid-cell-inner,
 .x-grid-item-selected .x-grid-cell,
 .x-grid-item-selected .x-grid-td,
 .x-grid-item-selected td.x-grid-cell {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+    border-bottom: 1px solid var(--pm-border-divider) !important;
 }
 
 .x-grid-item-selected {
-    background-color: rgba(0, 110, 255, 0.08) !important;
-    box-shadow: rgba(71, 151, 255, 0.1) 0px 0px 0px 1000px inset !important;
+    background-color: var(--pm-bg-accent-soft) !important;
+    box-shadow: var(--pm-shadow-accent) !important;
 }
 
 .x-grid-item-selected .x-grid-cell-inner {
@@ -1425,12 +1500,12 @@ div[id^="pveLogView-"] .x-grid-cell-inner,
 /* More visible hover state */
 .x-grid-item-over .x-grid-cell-inner,
 .x-grid-item-over .x-grid-cell {
-    color: #F9FAFA !important;
+    color: var(--pm-text-strong) !important;
 }
 
 .x-column-header-over,
 .x-column-header-open {
-    background-color: #1e1e1e;
+    background-color: var(--pm-bg-elevated);
 }
 
 .x-column-header-sort-ASC,
@@ -1441,8 +1516,8 @@ div[id^="pveLogView-"] .x-grid-cell-inner,
 .x-grid-row-summary .x-grid-cell,
 .x-grid-row-summary .x-grid-rowwrap,
 .x-grid-row-summary .x-grid-cell-rowbody {
-    background-color: #000000 !important;
-    border-color: #1e1e1e;
+    background-color: var(--pm-bg-plain) !important;
+    border-color: var(--pm-border-soft);
 }
 
 .x-grid-with-col-lines .x-grid-cell,
@@ -1453,71 +1528,71 @@ div[id^="pveLogView-"] .x-grid-cell-inner,
 }
 
 .x-dd-drag-proxy {
-    background-color: #0a0a0a;
-    border: 1px solid #1e1e1e;
-    color: #c2c7cd;
+    background-color: var(--pm-bg-surface);
+    border: 1px solid var(--pm-border-soft);
+    color: var(--pm-text-secondary);
 }
 
 .x-keyboard-mode .x-grid-item-focused {
-    background-color: rgba(249, 250, 250, 0.07);
-    color: #F9FAFA;
+    background-color: var(--pm-selection-bg);
+    color: var(--pm-text-strong);
 }
 
 .x-keyboard-mode .x-grid-item-focused .x-grid-cell-inner::before {
-    border-color: #801effc8;
+    border-color: var(--pm-btn-primary-bg);
 }
 
 .x-grid-empty {
-    background-color: #000000;
-    color: #737C87;
+    background-color: var(--pm-bg-plain);
+    color: var(--pm-text-tertiary);
 }
 
 /* =====================================================
    MENUS - Floating, clean (UniFi authentic)
    ===================================================== */
 .x-menu-default {
-    border: 1px solid #1e1e1e;
+    border: 1px solid var(--pm-border-soft);
     border-radius: 8px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--pm-shadow-md);
 }
 
 .x-menu-body-default {
-    background-color: #0a0a0a;
+    background-color: var(--pm-bg-surface);
 }
 
 .x-menu-header {
-    background-color: #801effc8;
+    background-color: var(--pm-btn-primary-bg);
 }
 
 .x-menu-item-default.x-menu-item-separator {
-    background-color: #0a0a0a;
-    border-color: #1e1e1e;
+    background-color: var(--pm-bg-surface);
+    border-color: var(--pm-border-soft);
 }
 
 .x-menu-item-default.x-menu-item-focus,
 .x-menu-item-default.x-menu-item-active {
-    background-color: rgba(249, 250, 250, 0.07) !important;
-    color: #F9FAFA;
+    background-color: var(--pm-selection-bg) !important;
+    color: var(--pm-text-strong);
 }
 
 .x-menu-item-text-default {
-    color: #DEE0E3;
+    color: var(--pm-text-primary);
 }
 
 .x-menu-item-icon-default {
-    color: #c2c7cd;
+    color: var(--pm-text-secondary);
 }
 
 .x-menu-icon-separator-default {
     background-color: transparent;
-    border-color: #1e1e1e;
+    border-color: var(--pm-border-soft);
 }
 
 /* =====================================================
    PANELS - Card-like containers (UniFi authentic)
    ===================================================== */
 .x-panel-header-default {
-    background-color: #000000;
+    background-color: var(--pm-bg-plain);
     border: none;
 }
 
@@ -1559,7 +1634,7 @@ div[id^="pveLogView-"] .x-grid-cell-inner,
 }
 
 .x-panel-header-title-default {
-    color: #F9FAFA;
+    color: var(--pm-text-strong);
 }
 
 /* Panel header text (VM/Container titles in toolbar) */
@@ -1568,13 +1643,13 @@ div[id^="pveLogView-"] .x-grid-cell-inner,
 .x-panel-header-text.x-box-item,
 .x-toolbar .x-panel-header-text,
 .x-toolbar-item.x-panel-header-text {
-    color: #F9FAFA !important;
+    color: var(--pm-text-strong) !important;
 }
 
 /* Title text general */
 .x-title-text,
 .x-title-text-default {
-    color: #F9FAFA !important;
+    color: var(--pm-text-strong) !important;
     overflow: visible !important;
 }
 
@@ -1711,23 +1786,23 @@ div[id^="pbsNodeInfoPanel"][id$="-body"] {
     width: 7px !important;
     min-width: 7px !important;
     background-color: transparent !important;
-    border-right: 1px solid #444444 !important;
+    border-right: 1px solid var(--pm-border-strong) !important;
     z-index: 10 !important;
 }
 
 .x-keyboard-mode .x-splitter-focus::after {
-    border-color: #801effc8;
+    border-color: var(--pm-btn-primary-bg);
 }
 
 /* =====================================================
    TABS - Clean, flat (UniFi authentic)
    ===================================================== */
 .x-tab-bar-default {
-    background-color: #000000;
+    background-color: var(--pm-bg-plain);
 }
 
 .x-tab-default.x-tab-over {
-    background-color: rgba(249, 250, 250, 0.04);
+    background-color: var(--pm-selection-bg-hover);
     border: none;
 }
 
@@ -1759,81 +1834,81 @@ div[id^="pbsNodeInfoPanel"][id$="-body"] {
 }
 
 .x-tab-default.x-tab.x-tab-active {
-    background-color: #801effc8;
+    background-color: var(--pm-btn-primary-bg);
     border: none;
 }
 
 .x-tab-default.x-tab.x-tab-disabled {
     background-color: transparent;
     border: none;
-    color: #737C87;
+    color: var(--pm-text-tertiary);
 }
 
 .x-keyboard-mode .x-tab-default.x-tab-focus,
 .x-keyboard-mode .x-tab-default.x-tab-focus.x-tab-active {
-    background-color: #801effc8;
+    background-color: var(--pm-btn-primary-bg);
     border: none;
 }
 
 .x-tab-default-top {
-    background-color: #000000;
+    background-color: var(--pm-bg-plain);
     border: none;
 }
 
 .x-tab-inner-default {
-    color: #c2c7cd;
+    color: var(--pm-text-secondary);
 }
 
 .x-tab-active .x-tab-inner-default {
-    color: #ffffff;
+    color: var(--pm-text-inverse);
 }
 
 /* =====================================================
    TOOLTIPS (UniFi authentic)
    ===================================================== */
 .x-tip-default {
-    background-color: #0a0a0a;
-    border: 1px solid #1e1e1e;
+    background-color: var(--pm-bg-surface);
+    border: 1px solid var(--pm-border-soft);
     border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    box-shadow: var(--pm-shadow-sm);
 }
 
 .x-tip-body-default {
-    color: #DEE0E3;
+    color: var(--pm-text-primary);
 }
 
 .x-tip-form-invalid {
-    background-color: #0a0a0a;
-    border-color: #f03a3e;
+    background-color: var(--pm-bg-surface);
+    border-color: var(--pm-error);
 }
 
 .x-tip-body-form-invalid {
-    color: #f03a3e;
+    color: var(--pm-error);
 }
 
 /* =====================================================
    TOOLBARS - Minimal borders (UniFi authentic)
    ===================================================== */
 .x-toolbar {
-    background-color: #000000;
+    background-color: var(--pm-bg-plain);
 }
 
 .x-toolbar-default {
-    background-color: #000000;
+    background-color: var(--pm-bg-plain);
     border: none;
 }
 
 .x-toolbar-default.x-docked-top {
     border: none;
-    border-bottom: 1px solid #0a0a0a;
+    border-bottom: 1px solid var(--pm-bg-surface);
 }
 
 .x-toolbar-default .x-toolbar-separator {
-    border-color: #1e1e1e;
+    border-color: var(--pm-border-soft);
 }
 
 .x-toolbar-text-default {
-    color: #c2c7cd;
+    color: var(--pm-text-secondary);
 }
 
 /* =====================================================
@@ -1841,7 +1916,7 @@ div[id^="pbsNodeInfoPanel"][id$="-body"] {
    ===================================================== */
 .x-treelist-item,
 .x-treelist-item-tool {
-    background-color: #000000;
+    background-color: var(--pm-bg-plain);
     border-radius: 4px !important;
 }
 
@@ -1866,7 +1941,7 @@ div[id^="pbsNodeInfoPanel"][id$="-body"] {
 
 .x-treelist-item-text,
 .x-treelist-item-icon {
-    color: rgba(255, 255, 255, 0.75);
+    color: var(--pm-treelist-text-default);
 }
 
 /* Remove ALL old hover/selected background styles */
@@ -1942,21 +2017,21 @@ div[id^="pbsNodeInfoPanel"][id$="-body"] {
 
 /* Selected item text - BLUE like UniFi */
 .x-treelist-item-selected>.x-treelist-row .x-treelist-item-text {
-    color: rgb(71, 151, 255) !important;
+    color: var(--pm-treelist-text-selected) !important;
 }
 
 /* Selected item icon - BLUE like UniFi */
 .x-treelist-item-selected>.x-treelist-row .x-treelist-item-icon {
-    color: rgb(71, 151, 255) !important;
+    color: var(--pm-treelist-icon-selected) !important;
 }
 
 /* Parent item containing selected child - WHITE text and icon */
 .x-treelist-item:has(.x-treelist-item-selected)>.x-treelist-row .x-treelist-item-text {
-    color: #F9FAFA !important;
+    color: var(--pm-treelist-text-selected-parent) !important;
 }
 
 .x-treelist-item:has(.x-treelist-item-selected)>.x-treelist-row .x-treelist-item-icon {
-    color: #F9FAFA !important;
+    color: var(--pm-treelist-icon-selected-parent) !important;
 }
 
 /* Reset non-selected child items */
@@ -1970,7 +2045,7 @@ div[id^="pbsNodeInfoPanel"][id$="-body"] {
 
 .x-treelist-item-selected .x-treelist-item:not(.x-treelist-item-selected):not(:has(.x-treelist-item-selected)) .x-treelist-item-text,
 .x-treelist-item-selected .x-treelist-item:not(.x-treelist-item-selected):not(:has(.x-treelist-item-selected)) .x-treelist-item-icon {
-    color: #c2c7cd !important;
+    color: var(--pm-treelist-text-muted) !important;
 }
 
 .x-treelist-pve-nav {
@@ -1996,21 +2071,21 @@ div[id^="pbsNodeInfoPanel"][id$="-body"] {
 }
 
 .x-window-header-default .x-mask {
-    background-color: rgba(40, 43, 47, 0.7);
+    background-color: var(--pm-bg-header-mask);
 }
 
 .x-window-header-title-default {
-    color: #F9FAFA;
+    color: var(--pm-text-strong);
 }
 
 .x-window-body-default {
-    background-color: #000000;
+    background-color: var(--pm-bg-plain);
     border: none;
-    color: #c2c7cd;
+    color: var(--pm-text-secondary);
 }
 
 .x-window-ghost {
-    background-color: #000000;
+    background-color: var(--pm-bg-plain);
 }
 
 .x-window-header-default .x-tool-img {
@@ -2018,7 +2093,7 @@ div[id^="pbsNodeInfoPanel"][id$="-body"] {
 }
 
 .x-message-box .x-window-body {
-    background-color: #0a0a0a;
+    background-color: var(--pm-bg-surface);
 }
 
 /* =====================================================
@@ -2175,23 +2250,23 @@ div.eol-notice+div[id^="panel-"]>div[id^="panel-"][id$="-bodyWrap"]>div {
    PROXMOX SPECIFIC (UniFi authentic)
    ===================================================== */
 .proxmox-invalid-row {
-    background-color: rgba(240, 58, 62, 0.15);
+    background-color: var(--pm-bg-danger-soft);
 }
 
 .x-keyboard-mode .proxmox-invalid-row .x-grid-item-focused {
-    background-color: rgba(240, 58, 62, 0.25);
+    background-color: var(--pm-bg-danger-soft-strong);
 }
 
 .proxmox-warning-row {
-    background-color: rgba(245, 166, 35, 0.15);
+    background-color: var(--pm-bg-warning-soft);
 }
 
 .proxmox-disabled-row td {
-    color: #737C87;
+    color: var(--pm-text-tertiary);
 }
 
 .pmx-hint {
-    background-color: rgba(245, 166, 35, 0.15);
+    background-color: var(--pm-bg-warning-soft);
     white-space: nowrap !important;
 }
 
@@ -2205,18 +2280,18 @@ div.eol-notice+div[id^="panel-"]>div[id^="panel-"][id$="-bodyWrap"]>div {
 }
 
 .proxmox-inline-button {
-    background-color: #1e1e1e;
+    background-color: var(--pm-btn-secondary-bg);
     border: none;
-    color: #c2c7cd;
+    color: var(--pm-btn-secondary-text);
 }
 
 .proxmox-inline-button.x-btn-over {
-    background-color: rgba(249, 250, 250, 0.07);
+    background-color: var(--pm-selection-bg);
 }
 
 .proxmox-inline-button .x-btn-inner,
 .proxmox-inline-button .x-btn-icon-el {
-    color: #c2c7cd;
+    color: var(--pm-btn-secondary-text);
 }
 
 /* Loading indicators */
@@ -2228,66 +2303,66 @@ div.eol-notice+div[id^="panel-"]>div[id^="panel-"][id$="-bodyWrap"]>div {
 }
 
 .x-mask-msg {
-    background-color: #0a0a0a;
-    border: 1px solid #1e1e1e;
+    background-color: var(--pm-bg-surface);
+    border: 1px solid var(--pm-border-soft);
     border-radius: 8px;
 }
 
 /* Markdown content */
 .pmx-md code {
-    background-color: #000000;
+    background-color: var(--pm-bg-plain);
 }
 
 .pmx-md pre code {
-    border-color: #1e1e1e;
+    border-color: var(--pm-border-soft);
 }
 
 .pmx-md tbody tr td {
-    border-color: #1e1e1e;
+    border-color: var(--pm-border-soft);
 }
 
 .pmx-md tbody tr:nth-of-type(2n) {
-    background-color: rgba(249, 250, 250, 0.02);
+    background-color: var(--pm-selection-bg-soft);
 }
 
 .pmx-md tbody tr:hover td {
-    background-color: rgba(249, 250, 250, 0.04);
+    background-color: var(--pm-selection-bg-hover);
 }
 
 .pmx-md a {
-    color: #1e85ff;
+    color: var(--pm-info-blue);
 }
 
 /* APT repos */
 .proxmox-apt-repos .x-grid-group-hd {
-    background-color: #000000;
+    background-color: var(--pm-bg-plain);
     border: none;
 }
 
 .proxmox-apt-repos .x-grid-group-title {
-    color: #F9FAFA;
+    color: var(--pm-text-strong);
 }
 
 /* Status colors */
 .info-blue {
-    color: #1e85ff !important;
+    color: var(--pm-info-blue) !important;
 }
 
 .critical {
-    color: #f03a3e !important;
+    color: var(--pm-status-critical) !important;
 }
 
 /* Tags - Native contrast detection with proper visibility */
 .pve-edit-tag.editable span {
-    background-color: #0a0a0a;
-    color: #c2c7cd;
-    border-color: #1e1e1e;
+    background-color: var(--pm-bg-surface);
+    color: var(--pm-text-secondary);
+    border-color: var(--pm-border-soft);
 }
 
 /* Tags with LIGHT text (dark backgrounds like blue tags) */
 .pve-edit-tag.proxmox-tag-light,
 .pve-edit-tag.proxmox-tag-light span {
-    color: #FFFFFF !important;
+    color: var(--pm-text-inverse) !important;
 }
 
 /* Tags with DARK text (bright backgrounds like pink/yellow tags) - non-edit mode only */
@@ -2349,11 +2424,11 @@ span.proxmox-tag-light {
 
 .pve-tag-inline-button .fa-pencil,
 .pve-tag-inline-button .x-fa.fa-pencil {
-    color: #8A919A !important;
+    color: var(--pm-tag-muted) !important;
 }
 
 .pve-tag-inline-button:hover .fa-pencil {
-    color: #F9FAFA !important;
+    color: var(--pm-text-strong) !important;
 }
 
 /* v5.29: Checkmark button in tag edit - match toolbar button size */
@@ -2363,20 +2438,20 @@ span.proxmox-tag-light {
     height: 24px !important;
     padding: 3px 8px !important;
     border-radius: 4px !important;
-    background-color: #801effc8 !important;
+    background-color: var(--pm-btn-primary-bg) !important;
     border: none !important;
 }
 
 /* Disabled checkmark - gray/transparent */
 .x-btn.x-btn-default-small:has(.fa-check).x-btn-disabled {
     background-color: transparent !important;
-    border: 1px solid #1e1e1e !important;
+    border: 1px solid var(--pm-border-soft) !important;
     opacity: 0.5 !important;
 }
 
 /* Checkmark icon - white when enabled */
 .x-btn.x-btn-default-small:has(.fa-check) .fa-check {
-    color: #ffffff !important;
+    color: var(--pm-text-inverse) !important;
 }
 
 /* Disabled checkmark icon - gray */
@@ -2407,26 +2482,26 @@ span.proxmox-tag-light {
 .x-datepicker,
 .x-datepicker-column-header,
 .x-monthpicker {
-    background-color: #000000;
-    color: #c2c7cd;
+    background-color: var(--pm-date-bg);
+    color: var(--pm-date-text);
     border: none;
 }
 
 .x-datepicker-month .x-btn-over.x-btn-default-small {
-    background-color: #1e1e1e;
+    background-color: var(--pm-date-hover-bg);
 }
 
 .x-monthpicker-months {
-    border-color: #1e1e1e;
+    border-color: var(--pm-date-border);
 }
 
 .x-datepicker-header {
-    background-color: #000000;
+    background-color: var(--pm-date-bg);
 }
 
 .x-datepicker-date,
 .x-monthpicker-item-inner {
-    color: #c2c7cd;
+    color: var(--pm-date-text);
 }
 
 .x-datepicker-prevday .x-datepicker-date,
@@ -2465,7 +2540,7 @@ div.x-datepicker-date:hover {
 }
 
 .usage {
-    background-color: #37BE5F !important;
+    background-color: var(--pm-success) !important;
     border-radius: 2px !important;
     width: 100% !important;
 }
@@ -2474,16 +2549,16 @@ div.x-datepicker-date:hover {
    CONSOLE / TERMINAL
    ===================================================== */
 div.monitor {
-    border-color: #1e1e1e;
+    border-color: var(--pm-border-soft);
 }
 
 .install-mask {
-    background-color: #000000;
-    color: #c2c7cd;
+    background-color: var(--pm-bg-plain);
+    color: var(--pm-text-secondary);
 }
 
 .x-window.install-mask {
-    box-shadow: rgba(0, 0, 0, 0.5) 0 4px 20px !important;
+    box-shadow: var(--pm-shadow-panel) !important;
 }
 
 /* =====================================================
@@ -2575,21 +2650,21 @@ a:hover {
 }
 
 ::-webkit-scrollbar-track {
-    background: #000000;
+    background: var(--pm-bg-plain);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #1e1e1e;
+    background: var(--pm-border-soft);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(249, 250, 250, 0.07);
+    background: var(--pm-selection-bg);
 }
 
 /* v5.84: Style scrollbar corner to match theme (eliminates white square) */
 ::-webkit-scrollbar-corner {
-    background-color: #000000;
+    background-color: var(--pm-bg-plain);
 }
 
 /* =====================================================
@@ -2629,8 +2704,8 @@ td,
 .pveStatusPanel,
 .x-panel-default-framed,
 .x-panel-body-default-framed {
-    background-color: #000000 !important;
-    border: 1px solid #1e1e1e !important;
+    background-color: var(--pm-bg-plain) !important;
+    border: 1px solid var(--pm-border-soft) !important;
     border-radius: 12px !important;
 }
 
@@ -2642,9 +2717,9 @@ td,
 
 /* Panel headers in summary */
 .x-panel-header-default-framed {
-    background-color: #0a0a0a !important;
+    background-color: var(--pm-bg-surface) !important;
     border: none !important;
-    border-bottom: 1px solid #1e1e1e !important;
+    border-bottom: 1px solid var(--pm-border-soft) !important;
     border-radius: 12px 12px 0 0 !important;
 }
 
@@ -2662,8 +2737,8 @@ td,
 /* Graph containers - ensure visibility */
 .pve-rrdview,
 .rrdview {
-    background-color: #000000 !important;
-    border: 1px solid #1e1e1e !important;
+    background-color: var(--pm-bg-plain) !important;
+    border: 1px solid var(--pm-border-soft) !important;
     border-radius: 12px !important;
     padding: 12px !important;
 }
@@ -2693,22 +2768,22 @@ canvas.x-surface,
 /* Chart text/labels */
 .x-surface text,
 svg text {
-    fill: #DEE0E3 !important;
+    fill: var(--pm-text-primary) !important;
 }
 
 /* Summary status panel */
 .pve-summary-status,
 .x-container .pve-status {
-    background-color: #000000 !important;
-    border: 1px solid #1e1e1e !important;
+    background-color: var(--pm-bg-plain) !important;
+    border: 1px solid var(--pm-border-soft) !important;
     border-radius: 8px !important;
 }
 
 /* Notes panel */
 .x-panel-default[id*="notes"],
 .pve-notes-view {
-    background-color: #000000 !important;
-    border: 1px solid #1e1e1e !important;
+    background-color: var(--pm-bg-plain) !important;
+    border: 1px solid var(--pm-border-soft) !important;
     border-radius: 8px !important;
 }
 
@@ -2716,14 +2791,14 @@ svg text {
    FIX: Fieldset and form sections
    ===================================================== */
 .x-fieldset {
-    background-color: #000000 !important;
-    border: 1px solid #1e1e1e !important;
+    background-color: var(--pm-bg-plain) !important;
+    border: 1px solid var(--pm-border-soft) !important;
     border-radius: 8px !important;
     padding: 12px !important;
 }
 
 .x-fieldset-header-text {
-    color: #F9FAFA !important;
+    color: var(--pm-text-strong) !important;
     font-weight: 500 !important;
 }
 
@@ -2889,20 +2964,20 @@ svg text {
 /* Menu item hover */
 .x-menu-item:hover,
 .x-menu-item-active {
-    background-color: #141414 !important;
+    background-color: var(--pm-bg-surface-alt) !important;
 }
 
 /* Tab hover */
 .x-tab:hover,
 .x-tab.x-tab-over {
-    background-color: #0a0a0a !important;
+    background-color: var(--pm-bg-surface) !important;
 }
 
 /* Dropdown item hover - UniFi style */
 .x-boundlist-item:hover,
 .x-boundlist-item-over {
-    background-color: rgba(249, 250, 250, 0.04) !important;
-    color: #F9FAFA !important;
+    background-color: var(--pm-selection-bg-hover) !important;
+    color: var(--pm-text-strong) !important;
 }
 
 /* Panel tool icons */
@@ -3049,12 +3124,12 @@ div[class*="gauge"] {
    ===================================================== */
 /* The selected parent row should ALWAYS have blue icon, regardless of child hover state */
 .x-treelist-item-selected.x-treelist-item-expanded>.x-treelist-row .x-treelist-item-icon {
-    color: #801effc8 !important;
+    color: var(--pm-treelist-icon-selected) !important;
 }
 
 /* Even when entire treelist has hover somewhere, selected parent icon stays blue */
 .x-treelist-item-selected>.x-treelist-row .x-treelist-item-icon {
-    color: #801effc8 !important;
+    color: var(--pm-treelist-icon-selected) !important;
 }
 
 /* =====================================================
@@ -3064,15 +3139,15 @@ div[class*="gauge"] {
 /* Toolbar button hover state */
 .x-btn-default-toolbar-small:hover,
 .x-btn-default-toolbar-small.x-btn-over {
-    background-color: #1e1e1e !important;
-    border-color: #4A4F56 !important;
+    background-color: var(--pm-btn-secondary-hover-bg) !important;
+    border-color: var(--pm-border-hover) !important;
 }
 
 /* Pressed/active state for toolbar buttons */
 .x-btn-default-toolbar-small.x-btn-pressed,
 .x-btn-default-toolbar-small.x-btn-menu-active {
-    background-color: #801effc8 !important;
-    border-color: #801effc8 !important;
+    background-color: var(--pm-btn-primary-bg) !important;
+    border-color: var(--pm-btn-primary-bg) !important;
 }
 
 /* Disabled state for toolbar buttons */
@@ -3255,7 +3330,7 @@ html {
 /* Reset text/icon color for non-selected children of selected parent */
 .x-treelist-item-selected .x-treelist-item:not(.x-treelist-item-selected) .x-treelist-item-text,
 .x-treelist-item-selected .x-treelist-item:not(.x-treelist-item-selected) .x-treelist-item-icon {
-    color: #c2c7cd !important;
+    color: var(--pm-treelist-text-muted) !important;
 }
 
 /* =====================================================
@@ -3272,12 +3347,12 @@ html {
    ===================================================== */
 /* Hover background for normal items */
 .x-treelist-item-over>.x-treelist-row {
-    background-color: #141414 !important;
+    background-color: var(--pm-bg-surface-alt) !important;
 }
 
 /* Hover background for child items inside selected parent - higher specificity */
 .x-treelist-item-selected .x-treelist-item.x-treelist-item-over:not(.x-treelist-item-selected)>.x-treelist-row {
-    background-color: #141414 !important;
+    background-color: var(--pm-bg-surface-alt) !important;
 }
 
 /* Hover text/icon color */
@@ -3285,7 +3360,7 @@ html {
 .x-treelist-item-over>.x-treelist-row .x-treelist-item-icon,
 .x-treelist-item-selected .x-treelist-item.x-treelist-item-over:not(.x-treelist-item-selected)>.x-treelist-row .x-treelist-item-text,
 .x-treelist-item-selected .x-treelist-item.x-treelist-item-over:not(.x-treelist-item-selected)>.x-treelist-row .x-treelist-item-icon {
-    color: #FFFFFF !important;
+    color: var(--pm-treelist-text-hover) !important;
 }
 
 /* =====================================================
@@ -3806,7 +3881,7 @@ body .x-window .x-panel .x-panel-bodyWrap>.x-tab-bar+.x-panel-body.x-panel-body-
     font-size: 14px !important;
     line-height: 16px !important;
     text-align: center !important;
-    color: #737C87 !important;
+    color: var(--pm-text-tertiary) !important;
     transition: color 0.15s ease !important;
     filter: none !important;
     width: 16px !important;
@@ -3886,7 +3961,7 @@ body .x-window .x-panel .x-panel-bodyWrap>.x-tab-bar+.x-panel-body.x-panel-body-
 .x-tool:hover .x-tool-img.x-tool-gear,
 .x-tool:hover .x-tool-tool-el.x-tool-refresh,
 .x-tool:hover .x-tool-img.x-tool-refresh {
-    color: #DEE0E3 !important;
+    color: var(--pm-text-primary) !important;
 }
 
 /* Disabled state */
@@ -3905,7 +3980,7 @@ body .x-window .x-panel .x-panel-bodyWrap>.x-tab-bar+.x-panel-body.x-panel-body-
 /* Style generic tools that use text content with FontAwesome */
 .x-tool-tool-el[style*="font-family:FontAwesome"],
 .x-tool-tool-el[style*="font-family: FontAwesome"] {
-    color: #737C87 !important;
+    color: var(--pm-text-tertiary) !important;
     font-size: 14px !important;
     line-height: 16px !important;
     display: flex !important;
