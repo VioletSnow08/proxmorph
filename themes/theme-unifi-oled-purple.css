@@ -3850,14 +3850,7 @@ body .x-window .x-panel .x-panel-bodyWrap>.x-tab-bar+.x-panel-body.x-panel-body-
     content: "\f054" !important;  /* fa-chevron-right (>) */
 }
 
-/* Maximize (expand icon) */
-.x-tool-tool-el.x-tool-maximize::before,
-.x-tool-img.x-tool-maximize::before {
-    content: "\f065" !important;  /* fa-expand */
-}
-
-/* Restore (compress icon) */
-.x-tool-tool-el.x-tool-restore::before,
+/* Maximize (expand icon) */fore,
 .x-tool-img.x-tool-restore::before {
     content: "\f066" !important;  /* fa-compress */
 }
